@@ -1,0 +1,16 @@
+.*
+~*
+*.private.env.json
+!.gitignore
+!.github
+!tests/.coveragerc
+!.pre-commit-config.yaml
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+*.sqlite3
