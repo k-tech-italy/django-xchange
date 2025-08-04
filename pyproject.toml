@@ -45,6 +45,8 @@ dev = [
   "django",
   "django-factory-boy",
   "freezegun",
+  "mkdocs",
+  "mkdocs-material",
   "pre-commit",
   "pyoxr",
   "pytest",
