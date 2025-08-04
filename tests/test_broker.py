@@ -1,9 +1,6 @@
-from decimal import Decimal
-
 import pytest
 
 from django_xchange.brokers import Broker
-from django_xchange.utils import resolve_fqn
 from exceptions import ConfigurationError
 
 

@@ -1,8 +1,7 @@
-from datetime import date, timedelta
+from datetime import date
 
 import factory
 from factory.base import FactoryMetaClass
-from factory.fuzzy import FuzzyDecimal
 
 
 factories_registry = {}

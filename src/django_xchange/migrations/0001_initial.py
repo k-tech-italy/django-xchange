@@ -5,18 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Rate',
             fields=[
                 ('day', models.DateField(primary_key=True, serialize=False)),
-                ('base', models.CharField(default=django_xchange.models._get_base_currency, help_text='Base rate (ISO3)', max_length=3)),
+                (
+                    'base',
+                    models.CharField(
+                        default=django_xchange.models.get_base_currency, help_text='Base rate (ISO3)', max_length=3
+                    ),
+                ),
                 ('rates', models.JSONField(default=dict)),
             ],
         ),

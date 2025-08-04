@@ -2,25 +2,24 @@ import datetime
 from decimal import Decimal
 
 from django.db import models
-from django.conf import settings
 
 from django_xchange.config import Config
 
 
-def _get_base_currency():
+def get_base_currency() -> str:
     return Config().BASE_CURRENCY
 
 
 class Rate(models.Model):
     day = models.DateField(primary_key=True)
-    base = models.CharField(max_length=3, help_text='Base rate (ISO3)', default=_get_base_currency)
+    base = models.CharField(max_length=3, help_text='Base rate (ISO3)', default=get_base_currency)
     rates = models.JSONField(default=dict)
 
-    def __str__(self):
-        return str(self.day.strftime("%Y-%m-%d"))
+    def __str__(self) -> str:
+        return str(self.day.strftime('%Y-%m-%d'))
 
-    def get_rates(self, force=False, include=None):
-        """Retrieves the rate values as Decimals. Forces the refresh if needed."""
+    def get_rates(self, force: bool = False, include: list[str] = None) -> dict[str, Decimal]:
+        """Retrieve the rate values as Decimals. Forces the refresh if needed."""
         if include is None:
             include = []
 
@@ -31,8 +30,10 @@ class Rate(models.Model):
             rates = self.rates
         return {k: round(Decimal(v), 7) for k, v in rates.items()}
 
-    def convert(self, from_value: float or Decimal, from_currency: str, to_currency: str = None, force=False):
-        """Converts a value from a specific currency to another.
+    def convert(
+        self, from_value: float or Decimal, from_currency: str, to_currency: str = None, force: bool = False
+    ) -> Decimal:
+        """Convert a value from a specific currency to another.
 
         If target currency is not specified it will be using settings.BASE_CURRENCY.
 
@@ -50,13 +51,10 @@ class Rate(models.Model):
             to_currency = Config().BASE_CURRENCY
 
         rates = self.get_rates(force=force, include=[from_currency, to_currency])
-
-        # self.ensure_rates(force=force, include=[from_currency, to_currency])
         return round(from_value / Decimal(rates[from_currency]) * Decimal(rates[to_currency]), 7)
 
-
     @staticmethod
-    def for_date(day: datetime.date, refresh=False, include=None) -> "Rate":
+    def for_date(day: datetime.date, refresh: bool = False, include: list[str] = None) -> 'Rate':
         """Constructor-like method returning a Rate instance for the specific date.
 
         It will always request the BASE_CURRENCY.
@@ -77,6 +75,7 @@ class Rate(models.Model):
             missing = ((set(Config().CURRENCIES) | set(include)) - set(rate.rates)) | {Config().BASE_CURRENCY}
         if missing:
             from django_xchange.brokers import Broker
+
             client = Broker()
             fetched_rates = client.get_rates(day, missing)
             if refresh:
@@ -85,4 +84,3 @@ class Rate(models.Model):
                 rate.rates = fetched_rates | rate.rates
             rate.save()
         return rate
-

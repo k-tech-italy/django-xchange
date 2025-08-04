@@ -2,7 +2,7 @@ import typing
 from decimal import Decimal
 
 from django_xchange.config import Config
-from django_xchange.models import _get_base_currency
+from django_xchange.models import get_base_currency
 from django_xchange.utils import resolve_fqn
 from exceptions import ConfigurationError
 
@@ -23,12 +23,12 @@ class Broker:
             try:
                 resolved = resolve_fqn(broker)()
                 res = resolved.get_rates(day, symbols)
-                base = _get_base_currency()
+                base = get_base_currency()
                 if base != res['base']:
                     ratio = round(Decimal(1 / res['rates'][base]), 8)
                     rates = {k: float(round(v * ratio, 6)) for k, v in res['rates'].items()}
                 return rates
-            except Exception as ex:
+            except Exception:  # noqa: BLE001, S110
                 # TODO: think of better handling
                 pass
         raise RuntimeError('No rates available')
