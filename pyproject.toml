@@ -45,8 +45,6 @@ dev = [
   "django",
   "django-factory-boy",
   "freezegun",
-  "mkdocs",
-  "mkdocs-material",
   "pre-commit",
   "pyoxr",
   "pytest",
@@ -54,6 +52,10 @@ dev = [
   "pytest-django",
   "responses",
   "tox",
+]
+docs = [
+  "mkdocs>=1.6.1",
+  "mkdocs-material>=9.6.16",
 ]
 
 [tool.hatch]

@@ -298,8 +298,6 @@ dev = [
     { name = "django" },
     { name = "django-factory-boy" },
     { name = "freezegun" },
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
     { name = "pre-commit" },
     { name = "pyoxr" },
     { name = "pytest" },
@@ -307,6 +305,10 @@ dev = [
     { name = "pytest-django" },
     { name = "responses" },
     { name = "tox" },
+]
+docs = [
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
 ]
 
 [package.metadata]
@@ -321,8 +323,6 @@ dev = [
     { name = "django" },
     { name = "django-factory-boy" },
     { name = "freezegun" },
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
     { name = "pre-commit" },
     { name = "pyoxr" },
     { name = "pytest" },
@@ -330,6 +330,10 @@ dev = [
     { name = "pytest-django" },
     { name = "responses" },
     { name = "tox" },
+]
+docs = [
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.16" },
 ]
 
 [[package]]
