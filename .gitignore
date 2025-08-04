@@ -5,6 +5,7 @@
 !.github
 !tests/.coveragerc
 !.pre-commit-config.yaml
+# src/django_xchange/version.py
 
 # Python-generated files
 __pycache__/
