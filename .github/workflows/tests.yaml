@@ -80,13 +80,12 @@ jobs:
               token: ${{ secrets.CODECOV_TOKEN }}
               verbose: true
 
-      -   name: Upload coverage to Codecov
-          uses: codecov/codecov-action@v5
-          with:
-              env_vars: OS,PYTHON
-              fail_ci_if_error: true
-              files: ./coverage1.xml,./coverage2.xml,!./cache
-              flags: unittests
-              name: codecov-umbrella
-              token: ${{ secrets.CODECOV_TOKEN }}
-              verbose: true
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        continue-on-error: true
+        with:
+          env_vars: OS,PYTHON
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: false
+          name: codecov-${{env.GITHUB_REF_NAME}}
