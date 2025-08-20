@@ -45,6 +45,7 @@ dev = [
   "django",
   "django-factory-boy",
   "freezegun",
+  "httpie>=3.2.4",
   "pre-commit",
   "pyoxr",
   "pytest",

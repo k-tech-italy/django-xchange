@@ -11,5 +11,7 @@ Here is an example of the available settings:
 ```python
 XCHANGE_APP_ID = "your-app-id"
 XCHANGE_BASE_CURRENCY = "USD"
-XCHANGE_BROKER = "django_xchange.brokers.pyoxr.PyOXRBroker"
+XCHANGE_BROKER = [
+    "django_xchange.brokers.pyoxr.PyOXRBroker",
+]
 ```

@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.db import models
 
 from django_xchange.config import Config
+from django.db import transaction
 
 
 def get_base_currency() -> str:
@@ -14,6 +15,9 @@ class Rate(models.Model):
     day = models.DateField(primary_key=True)
     base = models.CharField(max_length=3, help_text='Base rate (ISO3)', default=get_base_currency)
     rates = models.JSONField(default=dict)
+
+    class Meta:
+        ordering = ['day']
 
     def __str__(self) -> str:
         return str(self.day.strftime('%Y-%m-%d'))
@@ -65,22 +69,26 @@ class Rate(models.Model):
 
         :return: Rate instance
         """
-        if include is None:
-            include = []
+        with transaction.atomic():
+            if include is None:
+                include = []
 
-        rate, _ = Rate.objects.get_or_create(day=day)
-        if refresh:
-            missing = set(Config().CURRENCIES) | {Config().BASE_CURRENCY} | set(include)
-        else:
-            missing = ((set(Config().CURRENCIES) | set(include)) - set(rate.rates)) | {Config().BASE_CURRENCY}
-        if missing:
-            from django_xchange.brokers import Broker
-
-            client = Broker()
-            fetched_rates = client.get_rates(day, missing)
+            rate, _ = Rate.objects.get_or_create(day=day)
             if refresh:
-                rate.rates |= fetched_rates
+                missing = set(Config().CURRENCIES) | {Config().BASE_CURRENCY} | set(include)
             else:
-                rate.rates = fetched_rates | rate.rates
-            rate.save()
-        return rate
+                missing = ((set(Config().CURRENCIES) | set(include)) - set(rate.rates)) | {Config().BASE_CURRENCY}
+            if missing:
+                from django_xchange.brokers import Broker
+
+                client = Broker()
+                fetched_rates = client.get_rates(day, missing)
+                if refresh:
+                    rate.rates |= fetched_rates
+                else:
+                    rate.rates = fetched_rates | rate.rates
+                rate.save()
+            return rate
+
+    def as_dict(self) -> dict:
+        return {self.day.strftime('%Y-%m-%d'): {'base': self.base, 'rates': self.rates}}
