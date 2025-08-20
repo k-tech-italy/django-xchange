@@ -9,7 +9,7 @@ requires = [
 name = "django-xchange"
 description = "Django currency exchange library"
 readme = "README.md"
-license = "MIT"
+license = "BSD-3"
 license-files = [
   "LICENSE",
 ]

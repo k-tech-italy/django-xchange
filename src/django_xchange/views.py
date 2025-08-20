@@ -31,7 +31,7 @@ def rate_view(request: HttpRequest, day: str) -> JsonResponse:
             try:
                 record = Rate.objects.get(day=day)
             except Rate.DoesNotExist:
-                if request.GET.get('force') and request.GET.get('force').upper() in ('TRUE', 'YES', '1', 'T'):
+                if request.GET.get('force') and request.GET.get('force')[:1].upper() in ('1', 'T', 'Y'):
                     record = Rate.for_date(day=day)
                 else:
                     return JsonResponse({'error': f'No record found for {day}'}, safe=False, status=404)
