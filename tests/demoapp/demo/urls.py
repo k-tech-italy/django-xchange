@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path
+from django.views.generic import RedirectView
 
 from django_xchange.views import ratelist_view, rate_view
 
@@ -24,4 +25,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('rate/', ratelist_view),
     path('rate/<str:day>/', rate_view),
+    path("", RedirectView.as_view(url="/admin/")),
 ]

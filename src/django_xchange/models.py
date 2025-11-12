@@ -79,9 +79,9 @@ class Rate(models.Model):
             else:
                 missing = ((set(Config().CURRENCIES) | set(include)) - set(rate.rates)) | {Config().BASE_CURRENCY}
             if missing:
-                from django_xchange.brokers import Broker
+                from django_xchange.brokers import BrokerManager
 
-                client = Broker()
+                client = BrokerManager()
                 fetched_rates = client.get_rates(day, missing)
                 if refresh:
                     rate.rates |= fetched_rates

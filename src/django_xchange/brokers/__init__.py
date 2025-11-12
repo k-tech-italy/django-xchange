@@ -1,1 +1,1 @@
-from .common import Broker  # noqa: F401
+from .common import BrokerManager  # noqa: F401

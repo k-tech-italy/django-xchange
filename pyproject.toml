@@ -9,30 +9,27 @@ requires = [
 name = "django-xchange"
 description = "Django currency exchange library"
 readme = "README.md"
-license = "BSD-3"
+license = { text = "K-Tech" }
 license-files = [
-  "LICENSE",
+  "LICENSE.md",
 ]
 authors = [
-  { name = "GigiusB", email = "g.bronzini@gmail.com" },
+  { name = "Giovanni Bronzini", email = "g.bronzini@gmail.com" },
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.13"
 classifiers = [
   "Environment :: Web Environment",
   "Framework :: Django",
-  "Framework :: Django :: 3.2",
-  "Framework :: Django :: 4.2",
   "Framework :: Django :: 5.2",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dynamic = [ "version" ]
 dependencies = [
+  "django",
   "requests",
 ]
 
@@ -42,22 +39,50 @@ optional-dependencies.pyoxr = [
 
 [dependency-groups]
 dev = [
-  "django",
-  "django-factory-boy",
-  "freezegun",
+  "django-extensions>=4.1",
   "httpie>=3.2.4",
   "pre-commit",
-  "pyoxr",
-  "pytest",
-  "pytest-cov",
-  "pytest-django",
+]
+test = [
+  "factory-boy>=3.3.3",
+  "freezegun>=1.5.5",
+  "pytest>=8.3.3",
+  "pytest-cov>=5",
+  "pytest-django>=4.11.1",
+  "pytest-randomly>=3.16",
+  "tox>=4.25",
   "responses",
-  "tox",
+]
+checks = [
+  "commitizen>=4.9.1",
+  "detect-secrets>=1.5",
+  "mypy>=1.17.1",
+  "ruff>=0.12.12",
 ]
 docs = [
-  "mkdocs>=1.6.1",
-  "mkdocs-material>=9.6.16",
+  "mkdocs>=1.5.3",
+  "mkdocs-awesome-pages-plugin>=2.9.3",
+  "mkdocs-click>=0.8.1",
+  "mkdocs-ezglossary-plugin>=1.6.10",
+  "mkdocs-ezlinks-plugin>=0.1.14",
+  "mkdocs-gen-files>=0.5",
+  "mkdocs-get-deps>=0.2",
+  "mkdocs-include-markdown-plugin>=6.2.2",
+  "mkdocs-link-marker>=0.1.3",
+  "mkdocs-macros-plugin>=1.0.5",
+  "mkdocs-material[imaging]>=9.5.15",
+  "mkdocs-minify-plugin",
+  "mkdocs-redirects",
+  "mkdocs-simple-hooks>=0.1.5",
+  "mkdocstrings[python]>=0.24.1",
+  "pymdown-extensions>=10.7.1",
 ]
+pyoxr = [
+    "django-xchange[pyoxr]"
+]
+
+[tool.uv]
+default-groups = [ "dev", "test", "docs", "pyoxr" ]
 
 [tool.hatch]
 build.hooks.vcs.version-file = "src/django_xchange/version.py"
@@ -72,6 +97,3 @@ include = [
 
 [tool.hatch.build.targets.wheel]
 packages = [ "src/django_xchange" ]
-
-[tool.uv]
-package = true
