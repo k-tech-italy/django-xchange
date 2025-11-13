@@ -3,12 +3,9 @@ from decimal import Decimal
 
 from django.db import models
 
-from django_xchange.config import Config
 from django.db import transaction
 
-
-def get_base_currency() -> str:
-    return Config().BASE_CURRENCY
+from django_xchange.config import get_base_currency
 
 
 class Rate(models.Model):

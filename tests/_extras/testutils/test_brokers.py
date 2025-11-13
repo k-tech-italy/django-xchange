@@ -1,7 +1,6 @@
 import typing
-from decimal import Decimal as D
+from decimal import Decimal as D  # noqa: N817
 
-from django_xchange.brokers import BrokerManager
 
 if typing.TYPE_CHECKING:
     from datetime import date

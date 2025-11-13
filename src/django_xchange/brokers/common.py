@@ -2,8 +2,6 @@ import typing
 from decimal import Decimal
 from gettext import gettext as _
 
-from django_xchange.config import config
-from django_xchange.models import get_base_currency
 from django_xchange.types import BrokerProtocol
 from django_xchange.utils import resolve_fqn
 from django_xchange.exceptions import ConfigurationError
@@ -14,7 +12,9 @@ if typing.TYPE_CHECKING:
 
 class BrokerManager:
     def get_rates(self, day: 'date', symbols: list[str] = None) -> dict[str, Decimal]:
-        if not (brokers := config.BROKERS):
+        from django_xchange.config import get_config, get_base_currency
+
+        if not (brokers := get_config().BROKERS):
             raise ConfigurationError(_('No brokers configured'))
         for broker in brokers:
             try:

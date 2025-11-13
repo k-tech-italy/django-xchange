@@ -5,16 +5,9 @@
 !.github
 !tests/.coveragerc
 !.pre-commit-config.yaml
-src/django_xchange/version.py
+!.*.example
 
-# Python-generated files
-__pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+dist
+__pycache__
 *.sqlite3
-
-# Target for mkdocs
-site
+src/django_xchange/version.py

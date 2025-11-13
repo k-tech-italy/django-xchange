@@ -1,31 +1,31 @@
-from decimal import Decimal as D
 from contextlib import nullcontext as does_not_raise
 
 import pytest
 
-from django_xchange.brokers import BrokerManager
 from django_xchange.exceptions import ConfigurationError
+from django_xchange.brokers import BrokerManager
 from testutils.test_brokers import DummyBroker
 
 
 @pytest.fixture
-def mock_broker(monkeypatch) -> None:
-    class MockedConfig:
-        pass
+def mock_config(monkeypatch) -> None:
+    def fx(**overrides):
+        from django_xchange.config import Config
 
-    monkeypatch.setattr('django_xchange.config.Config', MockedConfig)
-    yield
+        monkeypatch.setattr('django_xchange.config.get_config', lambda: Config(**overrides))
+
+    return fx
 
 
-def test_no_brokers(settings):
-    settings.DJANGO_XCHANGE = {'BROKERS': []}
+def test_no_brokers(mock_config):
+    mock_config(BROKERS=[])
 
     with pytest.raises(ConfigurationError, match='No brokers configured'):
         _ = BrokerManager().get_rates('2022-01-01')
 
 
-def test_bad_brokers(settings):
-    settings.DJANGO_XCHANGE = {'BROKERS': ['testutils.bad_broker.BadBroker']}
+def test_bad_brokers(mock_config):
+    mock_config(BROKERS=['testutils.bad_broker.BadBroker'])
 
     with pytest.raises(RuntimeError, match='No rates available'):
         _ = BrokerManager().get_rates('2022-01-01')
@@ -38,16 +38,10 @@ def test_bad_brokers(settings):
         pytest.param('AAA', does_not_raise(), {'AAA': 1, 'BBB': 2, 'EUR': 3}, id='AAA'),
     ],
 )
-def test_brokers_ok(base_curr, expectation, result, settings):
-    settings.DJANGO_XCHANGE = {
-        'BROKERS': lambda : [DummyBroker],
-        'BASE_CURRENCY': base_curr,
-    }
+def test_brokers_ok(base_curr, expectation, result, mock_config):
+    mock_config(BROKERS=lambda: [DummyBroker], BASE_CURRENCY=base_curr)
     with expectation:
         assert BrokerManager().get_rates('2022-01-01') == result | {
             '_base': base_curr,
             '_provider': 'testutils.bad_broker.DummyBroker',
         }
-
-    # settings.DJANGO_XCHANGE = {'BROKERS': [lambda: fqn('testutils.bad_broker.DummyBroker')]}
-    # assert Broker().get_rates('2022-01-01') == {'AAA': D(1), 'BBB': D(2), 'EUR': D(3)}
