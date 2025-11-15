@@ -10,10 +10,10 @@ class AnyUserAuthBackend(ModelBackend):
         user, __ = User.objects.update_or_create(
             username=username,
             defaults={
-                "is_staff": True,
-                "is_active": True,
-                "is_superuser": username.startswith('admin'),
-                "email": f'{username}@demo.org',
+                'is_staff': True,
+                'is_active': True,
+                'is_superuser': username.startswith('admin'),
+                'email': f'{username}@demo.org',
             },
         )
         return user

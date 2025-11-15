@@ -16,7 +16,7 @@ license-files = [
 authors = [
   { name = "Giovanni Bronzini", email = "g.bronzini@gmail.com" },
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 classifiers = [
   "Environment :: Web Environment",
   "Framework :: Django",
@@ -24,8 +24,10 @@ classifiers = [
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
 ]
 dynamic = [ "version" ]
 dependencies = [
@@ -50,14 +52,8 @@ test = [
   "pytest-cov>=5",
   "pytest-django>=4.11.1",
   "pytest-randomly>=3.16",
-  "tox>=4.25",
   "responses",
-]
-checks = [
-  "commitizen>=4.9.1",
-  "detect-secrets>=1.5",
-  "mypy>=1.17.1",
-  "ruff>=0.12.12",
+  "tox>=4.25",
 ]
 docs = [
   "mkdocs>=1.5.3",
@@ -77,12 +73,15 @@ docs = [
   "mkdocstrings[python]>=0.24.1",
   "pymdown-extensions>=10.7.1",
 ]
-pyoxr = [
-    "django-xchange[pyoxr]"
+checks = [
+  "commitizen>=4.9.1",
+  "detect-secrets>=1.5",
+  "mypy>=1.17.1",
+  "ruff>=0.12.12",
 ]
-
-[tool.uv]
-default-groups = [ "dev", "test", "docs", "pyoxr" ]
+pyoxr = [
+  "django-xchange[pyoxr]",
+]
 
 [tool.hatch]
 build.hooks.vcs.version-file = "src/django_xchange/version.py"
@@ -97,3 +96,6 @@ include = [
 
 [tool.hatch.build.targets.wheel]
 packages = [ "src/django_xchange" ]
+
+[tool.uv]
+default-groups = [ "dev", "test", "docs", "pyoxr" ]

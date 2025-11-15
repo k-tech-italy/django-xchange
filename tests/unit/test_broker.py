@@ -3,18 +3,8 @@ from contextlib import nullcontext as does_not_raise
 import pytest
 
 from django_xchange.exceptions import ConfigurationError
-from django_xchange.brokers import BrokerManager
+from django_xchange.brokers.common import BrokerManager
 from testutils.test_brokers import DummyBroker
-
-
-@pytest.fixture
-def mock_config(monkeypatch) -> None:
-    def fx(**overrides):
-        from django_xchange.config import Config
-
-        monkeypatch.setattr('django_xchange.config.get_config', lambda: Config(**overrides))
-
-    return fx
 
 
 def test_no_brokers(mock_config):

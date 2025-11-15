@@ -5,10 +5,10 @@ from django.db import models
 
 from django.db import transaction
 
-from django_xchange.config import get_base_currency
-
 
 class Rate(models.Model):
+    from django_xchange.config import get_base_currency
+
     day = models.DateField(primary_key=True)
     base = models.CharField(max_length=3, help_text='Base rate (ISO3)', default=get_base_currency)
     rates = models.JSONField(default=dict)
@@ -29,7 +29,7 @@ class Rate(models.Model):
             rates = Rate.for_date(self.day, refresh=force, include=include).rates
         else:
             rates = self.rates
-        return {k: round(Decimal(v), 7) for k, v in rates.items()}
+        return {k: round(Decimal(v), 7) for k, v in rates.items() if not k.startswith('_')}
 
     def convert(
         self, from_value: float or Decimal, from_currency: str, to_currency: str = None, force: bool = False
@@ -45,11 +45,13 @@ class Rate(models.Model):
 
         :return: The converted value.
         """
+        from django_xchange.config import get_config
+
         if not isinstance(from_value, Decimal):
             from_value = Decimal(from_value)
 
         if to_currency is None:
-            to_currency = Config().BASE_CURRENCY
+            to_currency = get_config().BASE_CURRENCY
 
         rates = self.get_rates(force=force, include=[from_currency, to_currency])
         return round(from_value / Decimal(rates[from_currency]) * Decimal(rates[to_currency]), 7)
@@ -66,17 +68,21 @@ class Rate(models.Model):
 
         :return: Rate instance
         """
+        from django_xchange.config import get_config
+
         with transaction.atomic():
             if include is None:
                 include = []
 
             rate, _ = Rate.objects.get_or_create(day=day)
             if refresh:
-                missing = set(Config().CURRENCIES) | {Config().BASE_CURRENCY} | set(include)
+                missing = set(get_config().CURRENCIES) | {get_config().BASE_CURRENCY} | set(include)
             else:
-                missing = ((set(Config().CURRENCIES) | set(include)) - set(rate.rates)) | {Config().BASE_CURRENCY}
+                missing = ((set(get_config().CURRENCIES) | set(include)) - set(rate.rates)) | {
+                    get_config().BASE_CURRENCY
+                }
             if missing:
-                from django_xchange.brokers import BrokerManager
+                from django_xchange.brokers.common import BrokerManager
 
                 client = BrokerManager()
                 fetched_rates = client.get_rates(day, missing)

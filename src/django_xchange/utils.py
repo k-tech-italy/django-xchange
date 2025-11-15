@@ -38,7 +38,7 @@ def import_csv(uploaded_file: UploadedFile | str | Path) -> dict[str, int]:
         if i == 0:
             headers = row
         else:
-            data = dict(zip(headers, row))
+            data = dict(zip(headers, row, strict=False))
             _, created = Rate.objects.get_or_create(day=data['day'], defaults={'rates': json.loads(data['rates'])})
             if created:
                 results['loaded'] += 1

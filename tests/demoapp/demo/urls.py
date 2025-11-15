@@ -25,5 +25,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('rate/', ratelist_view),
     path('rate/<str:day>/', rate_view),
-    path("", RedirectView.as_view(url="/admin/")),
+    path('', RedirectView.as_view(url='/admin/')),
 ]

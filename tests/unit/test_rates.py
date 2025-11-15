@@ -11,47 +11,48 @@ def test_rate_str(db):
     assert str(rate) == f'{rate.day:%Y-%m-%d}'
 
 
-@pytest.fixture(autouse=True)
-def pyoxr(settings):
-    settings.OPEN_EXCHANGE_RATES_APP_ID = ''
-    settings.DJANGO_XCHANGE = {'BROKERS': ['django_xchange.brokers.pyoxr.PyoxrBroker']}
-
-
 @responses.activate
 @pytest.mark.django_db
 @pytest.mark.parametrize(
     'initial, refresh, include, requested, expected',
     [
-        pytest.param(None, False, None, 'EUR,GBP,USD', {'EUR': 1.0, 'GBP': 0.839441, 'USD': 1.084928}, id='empty'),
         pytest.param(
-            {'ABC': 0.9, 'GBP': 1.1},
+            None, False, None, 'EUR,GBP,USD', {'_base': 'EUR', 'EUR': 1.0, 'GBP': 0.839441, 'USD': 1.084928}, id='empty'
+        ),
+        pytest.param(
+            {'_base': 'B', 'B': '1.0', 'ABC': 0.9, 'GBP': 1.1},
             False,
             None,
             'EUR,USD',
-            {'ABC': 0.9, 'EUR': 1.0, 'GBP': 1.1, 'USD': 1.084928},
+            {'_base': 'B', 'B': '1.0', 'ABC': 0.9, 'EUR': 1.0, 'GBP': 1.1, 'USD': 1.084928},
             id='existing',
         ),
         pytest.param(
-            {'EUR': 0.9, 'GBP': 1.1},
+            {'_base': 'B', 'B': '1.0', 'EUR': 0.9, 'GBP': 1.1},
             False,
             ['GBP'],
             'EUR,USD',
-            {'EUR': 0.9, 'GBP': 1.1, 'USD': 1.084928},
+            {'_base': 'B', 'B': '1.0', 'EUR': 0.9, 'GBP': 1.1, 'USD': 1.084928},
             id='not-overwrite',
         ),
         pytest.param(
-            {'GBP': 1.1}, True, None, 'EUR,GBP,USD', {'EUR': 1.0, 'GBP': 0.839441, 'USD': 1.084928}, id='force'
+            {'_base': 'B', 'B': '1.0', 'GBP': 1.1},
+            True,
+            None,
+            'EUR,GBP,USD',
+            {'_base': 'EUR', 'B': '1.0', 'EUR': 1.0, 'GBP': 0.839441, 'USD': 1.084928},
+            id='force',
         ),
     ],
 )
-def test_rate_for_day(initial, refresh, include, requested, expected, mock_rate_provider):
+def test_rate_for_day(initial, refresh, include, requested, expected, mock_pyoxr_provider):
     from django_xchange.models import Rate
 
     assert Rate.objects.count() == 0
 
     day = date(2022, 5, 7)
 
-    mock_rate_provider(
+    mock_pyoxr_provider(
         day,
         requested,
         {k: v for k, v in {'EUR': 0.92172, 'GBP': 0.77373, 'USD': 1}.items() if k in requested.split(',')},
@@ -62,11 +63,11 @@ def test_rate_for_day(initial, refresh, include, requested, expected, mock_rate_
     rate = Rate.for_date(day, refresh=refresh, include=include)
 
     assert rate.day == day
-    assert rate.rates == expected
+    assert rate.rates == expected | {'_provider': 'django_xchange.brokers.pyoxr.PyoxrBroker'}
 
     assert Rate.objects.count() == 1
     rate.refresh_from_db()
-    assert rate.rates == expected
+    assert rate.rates == expected | {'_provider': 'django_xchange.brokers.pyoxr.PyoxrBroker'}
 
 
 @responses.activate
@@ -109,7 +110,7 @@ def test_rate_convert(from_value, from_currency, to_currency, expected):
         ),
     ],
 )
-def test_rate_get_rates(ensured, force, include, expected, monkeypatch, mock_rate_provider):
+def test_rate_get_rates(ensured, force, include, expected, monkeypatch, mock_pyoxr_provider):
     from django_xchange.models import Rate
 
     day = date(2022, 5, 7)
@@ -117,7 +118,7 @@ def test_rate_get_rates(ensured, force, include, expected, monkeypatch, mock_rat
     rate = Rate(day=day, base='USD', rates={'EUR': 0.2, 'GBP': 2, 'USD': 1})
 
     if force:
-        mock_rate_provider(day, 'EUR,GBP,USD', {'EUR': 0.92172, 'GBP': 0.77373, 'USD': 1})
+        mock_pyoxr_provider(day, 'EUR,GBP,USD', {'EUR': 0.92172, 'GBP': 0.77373, 'USD': 1})
 
         rate.rates = ensured
 
