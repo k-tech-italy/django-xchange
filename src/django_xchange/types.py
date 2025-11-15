@@ -13,4 +13,4 @@ class BrokerProtocol(typing.Protocol):
         raise NotImplementedError()
 
 
-type BrokerType = str | BrokerProtocol
+BrokerType = typing.TypeVar('BrokerType', bound=str | BrokerProtocol)

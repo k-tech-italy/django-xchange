@@ -114,3 +114,10 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'demo.backends.AnyUserAuthBackend',
 ]
+
+
+DJANGO_XCHANGE = {
+    'BASE_CURRENCY': 'EUR',
+    'CURRENCIES': ['USD', 'EUR', 'GBP'],
+    'BROKERS': ['testutils.dummy_brokers.DummyBroker'],
+}

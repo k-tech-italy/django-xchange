@@ -3,10 +3,11 @@ from decimal import Decimal
 
 import pytest
 import responses
-from testutils.factories import RateFactory
 
 
 def test_rate_str(db):
+    from testutils.factories import RateFactory
+
     rate = RateFactory()
     assert str(rate) == f'{rate.day:%Y-%m-%d}'
 
@@ -47,6 +48,7 @@ def test_rate_str(db):
 )
 def test_rate_for_day(initial, refresh, include, requested, expected, mock_pyoxr_provider):
     from django_xchange.models import Rate
+    from testutils.factories import RateFactory
 
     assert Rate.objects.count() == 0
 
@@ -84,7 +86,8 @@ def test_rate_for_day(initial, refresh, include, requested, expected, mock_pyoxr
         pytest.param(1, 'GBP', None, Decimal('0.1'), id='gbp-default'),
     ],
 )
-def test_rate_convert(from_value, from_currency, to_currency, expected):
+def test_rate_convert(from_value, from_currency, to_currency, expected, settings, db):
+    settings.DJANGO_XCHANGE['BROKERS'] = ['testutils.test_brokers.DummyBroker']
     from django_xchange.models import Rate
 
     rate = Rate(day=date(2022, 5, 7), rates={'EUR': 0.2, 'GBP': 2, 'USD': 1})
@@ -110,7 +113,7 @@ def test_rate_convert(from_value, from_currency, to_currency, expected):
         ),
     ],
 )
-def test_rate_get_rates(ensured, force, include, expected, monkeypatch, mock_pyoxr_provider):
+def test_rate_get_rates(ensured, force, include, expected, monkeypatch, mock_pyoxr_provider, db):
     from django_xchange.models import Rate
 
     day = date(2022, 5, 7)

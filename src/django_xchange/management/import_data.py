@@ -1,11 +1,11 @@
+import sys
 from pathlib import Path
 
 from django.core.management import BaseCommand, call_command
+from django.utils.translation import gettext as _
 
 from django_xchange.management.utils import PrintCommandMixin
 from django_xchange.utils import import_csv
-from django.utils.translation import gettext as _
-import sys
 
 
 class Command(PrintCommandMixin, BaseCommand):

@@ -5,21 +5,19 @@ import responses
 @pytest.fixture
 def mock_config(monkeypatch) -> None:
     def fx(**overrides):
-        from django_xchange.config import Config
-
-        monkeypatch.setattr('django_xchange.config.get_config', lambda: Config(**overrides))
+        monkeypatch.setattr('django_xchange.config.Config._parse_env', lambda x: overrides)
 
     return fx
 
 
 @pytest.fixture
-def mock_pyoxr_provider(mock_config, monkeypatch, db):
-    from django.utils.http import urlencode
+def mock_pyoxr_provider(mock_config, monkeypatch, settings):
+    settings.DJANGO_XCHANGE['BROKERS'] = ['django_xchange.brokers.pyoxr.PyoxrBroker']
 
+    from django.utils.http import urlencode
     from pyoxr import OXRClient
 
     OXRClient.default_api = OXRClient(app_id='123')
-    mock_config(BROKERS=['django_xchange.brokers.pyoxr.PyoxrBroker'])
 
     from django_xchange.brokers.pyoxr import PyoxrBroker
 
