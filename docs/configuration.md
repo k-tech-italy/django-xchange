@@ -6,12 +6,27 @@ This section describes how to configure `django-xchange`.
 
 You can configure `django-xchange` in your Django `settings.py` file.
 
-Here is an example of the available settings:
+Here is an example of the settings:
 
 ```python
-XCHANGE_APP_ID = "your-app-id"
-XCHANGE_BASE_CURRENCY = "USD"
-XCHANGE_BROKER = [
-    "django_xchange.brokers.pyoxr.PyOXRBroker",
-]
+INSTALLED_APPS = (
+    [
+        ...
+        "django_xchange",
+        ...
+    ]
+
+...
+
+DJANGO_XCHANGE = {
+    'BASE_CURRENCY': 'EUR',
+    'CURRENCIES': ['USD', 'EUR', 'GBP'],
+    'BROKERS': ['django_xchange.brokers.pyoxr.PyOXRBroker'],
+}
 ```
+
+## Broker configuration
+
+See also the broker's documentation for the necessary settings and envrionment variables.
+For example the PyOXR broker will require the OPEN_EXCHANGE_RATES_APP_ID
+envrionment variable.

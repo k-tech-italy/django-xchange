@@ -1,3 +1,7 @@
 site_name: django-xchange
+docs_dir: docs
+site_dir: ./~build/docs
+site_name: "Django Xchange"
+site_url: https://k-tech-italy.github.io/django-xchange/
 theme:
   name: material
