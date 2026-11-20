@@ -13,4 +13,5 @@ class BrokerProtocol(typing.Protocol):
         raise NotImplementedError()
 
 
-BrokerType = typing.TypeVar('BrokerType', bound=str | BrokerProtocol)
+# A broker is configured either as a fully-qualified class name or as the class itself
+BrokerType: typing.TypeAlias = 'str | type[BrokerProtocol]'

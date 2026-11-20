@@ -1,7 +1,9 @@
+import datetime as dt
+import json
+
 from django.db import IntegrityError
 from django.http import JsonResponse, HttpRequest
 from django.views.decorators.csrf import csrf_exempt
-import json
 
 
 from .models import Rate
@@ -22,6 +24,7 @@ def ratelist_view(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'error': str(e)}, safe=False, status=400)
     except Exception as e:  # noqa: BLE001
         return JsonResponse({'error': str(e)}, safe=False, status=500)
+    return JsonResponse({'error': f'Method {request.method} not allowed'}, safe=False, status=405)
 
 
 @csrf_exempt  ## To exempt from default requirement for CSRF tokens to use postman
@@ -31,8 +34,8 @@ def rate_view(request: HttpRequest, day: str) -> JsonResponse:
             try:
                 record = Rate.objects.get(day=day)
             except Rate.DoesNotExist:
-                if request.GET.get('force') and request.GET.get('force')[:1].upper() in ('1', 'T', 'Y'):
-                    record = Rate.for_date(day=day)
+                if request.GET.get('force', '')[:1].upper() in ('1', 'T', 'Y'):
+                    record = Rate.for_date(day=dt.date.fromisoformat(day))
                 else:
                     return JsonResponse({'error': f'No record found for {day}'}, safe=False, status=404)
             return JsonResponse(record.as_dict(), safe=False)
@@ -52,3 +55,4 @@ def rate_view(request: HttpRequest, day: str) -> JsonResponse:
             return JsonResponse('None', safe=False, status=204)
     except Exception as e:  # noqa: BLE001
         return JsonResponse({'error': str(e)}, safe=False, status=500)
+    return JsonResponse({'error': f'Method {request.method} not allowed'}, safe=False, status=405)
