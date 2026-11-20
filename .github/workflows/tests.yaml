@@ -45,6 +45,8 @@ jobs:
     env:
       PY_VER: ${{ matrix.python}}
       DJ_VER: ${{ matrix.django}}
+      # Keep coverage data in the workspace root for the Codecov upload
+      COVERAGE_FILE: ${{ github.workspace }}/.coverage
 
     steps:
       - uses: actions/checkout@v4
