@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 from decimal import Decimal
 
 from django.db import models
@@ -57,7 +57,7 @@ class Rate(models.Model):
         return round(from_value / Decimal(rates[from_currency]) * Decimal(rates[to_currency]), 7)
 
     @staticmethod
-    def for_date(day: datetime.date, refresh: bool = False, include: list[str] = None) -> 'Rate':
+    def for_date(day: dt.date, refresh: bool = False, include: list[str] = None) -> 'Rate':
         """Constructor-like method returning a Rate instance for the specific date.
 
         It will always request the BASE_CURRENCY.

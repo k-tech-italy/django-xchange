@@ -24,9 +24,7 @@ It is mandatory to configure the DJANGO_XCHANGE['BROKERS'] item with a list of b
 For example:
 
 ```python
-DJANGO_XCHANGE = {
-    'BROKERS': ['django_xchange.brokers.pyoxr.PyoxrBroker']
-}
+DJANGO_XCHANGE = {'BROKERS': ['django_xchange.brokers.pyoxr.PyoxrBroker']}
 ```
 
 See specific notes for the third-party exchange providers configuration

@@ -11,5 +11,5 @@ Here is an example of how to use it:
 ```python
 from django_xchange.utils import get_rate
 
-rate = get_rate("USD", "EUR")
+rate = get_rate('USD', 'EUR')
 ```
