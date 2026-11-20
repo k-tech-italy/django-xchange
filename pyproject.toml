@@ -20,7 +20,11 @@ requires-python = ">=3.10"
 classifiers = [
   "Environment :: Web Environment",
   "Framework :: Django",
+  "Framework :: Django :: 3.2",
+  "Framework :: Django :: 4.2",
   "Framework :: Django :: 5.2",
+  "Framework :: Django :: 6.0",
+  "Framework :: Django :: 6.1",
   "Intended Audience :: Developers",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
@@ -28,13 +32,13 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 dynamic = [ "version" ]
 dependencies = [
   "django",
   "requests",
 ]
-
 optional-dependencies.pyoxr = [
   "pyoxr",
 ]
@@ -76,26 +80,29 @@ docs = [
 checks = [
   "commitizen>=4.9.1",
   "detect-secrets>=1.5",
+  "django-stubs>=6.0.9",
   "mypy>=1.17.1",
   "ruff>=0.12.12",
+  "types-requests>=2.33.0.20261030",
 ]
 pyoxr = [
   "django-xchange[pyoxr]",
 ]
 
 [tool.hatch]
-build.hooks.vcs.version-file = "src/django_xchange/version.py"
 version.source = "vcs"
+build.hooks.vcs.version-file = "src/django_xchange/version.py"
 raw-options = { root = "../.." }
 
-[tool.hatch.build.targets.sdist]
-ignore-vcs = true
-include = [
+[tool.hatch.build.targets]
+wheel.packages = [ "src/django_xchange" ]
+sdist.include = [
   "src/django_xchange/**/*.*",
 ]
-
-[tool.hatch.build.targets.wheel]
-packages = [ "src/django_xchange" ]
+sdist.ignore-vcs = true
 
 [tool.uv]
 default-groups = [ "dev", "test", "docs", "pyoxr" ]
+
+[tool.pyproject-fmt]
+max_supported_python = "3.14"

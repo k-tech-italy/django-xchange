@@ -77,12 +77,12 @@ def test_rate_for_day(initial, refresh, include, requested, expected, mock_pyoxr
 @pytest.mark.parametrize(
     'from_value, from_currency, to_currency, expected',
     [
-        pytest.param(1, 'USD', 'USD', Decimal('1'), id='usd-usd'),
+        pytest.param(1, 'USD', 'USD', Decimal(1), id='usd-usd'),
         pytest.param(1, 'USD', 'EUR', Decimal('0.20'), id='usd-eur'),
         pytest.param(1, 'EUR', 'USD', Decimal('5.0'), id='eur-usd'),
-        pytest.param(1, 'USD', 'GBP', Decimal('2'), id='usd-gbp'),
+        pytest.param(1, 'USD', 'GBP', Decimal(2), id='usd-gbp'),
         pytest.param(1, 'GBP', 'EUR', Decimal('0.1'), id='gbp-eur'),
-        pytest.param(1, 'EUR', 'GBP', Decimal('10'), id='eur-gbp'),
+        pytest.param(1, 'EUR', 'GBP', Decimal(10), id='eur-gbp'),
         pytest.param(1, 'GBP', None, Decimal('0.1'), id='gbp-default'),
     ],
 )

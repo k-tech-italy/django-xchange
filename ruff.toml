@@ -1,4 +1,4 @@
-target-version = "py312"
+target-version = "py310"
 line-length = 120
 
 [lint]
@@ -70,6 +70,7 @@ ignore = [
     "PLR2004", # Magic value used in comparison
     "DJ001", # Avoid using `null=True` on string-based fields such as `CharField`
     "N818",  # Exception name `{name}` should be named with an Error suffix
+    "PLC0415", # `import` should be at the top-level of a file (lazy imports are intentional in Django apps)
 ]
 
 [format]
@@ -92,5 +93,5 @@ section-order = ["future", "standard-library", "third-party", "first-party",  "l
 
 
 [lint.per-file-ignores]
-"tests/**.py" = ["S101", "PLR2004", "S", "SIM117", "D", "UP", "PLR0913", "ANN", "N999", "PT006", "PT007"]
+"tests/**.py" = ["S101", "PLR2004", "S", "SIM117", "D", "UP", "PLR0913", "ANN", "N999", "PT006", "PT007", "PLR0917"]
 "src/**/migrations/**.py" = ["E501", ]

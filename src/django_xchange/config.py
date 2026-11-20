@@ -1,19 +1,20 @@
 import typing
 from functools import lru_cache
-from typing import TypedDict
 
 from django.utils.translation import gettext as _
 from django_xchange.exceptions import ConfigurationError
 from django_xchange.types import BrokerType
 
 
-class ConfigType(TypedDict):
+class ConfigType(typing.Protocol):
     BASE_CURRENCY: str
     CURRENCIES: list[str]
     BROKERS: list[BrokerType]
 
 
 class Config:
+    _conf: typing.ClassVar[dict[str, typing.Any]] = {}
+
     def __init__(self) -> None:
         from django.conf import settings  # noqa: PLC0415
 
@@ -23,10 +24,10 @@ class Config:
 
     def __getattr__(self, item: str) -> object:
         if item in Config._conf:
-            item = Config._conf.get(item)
-            if callable(item):
-                return item()
-            return item
+            value = Config._conf[item]
+            if callable(value):
+                return value()
+            return value
         raise AttributeError(item)
 
 

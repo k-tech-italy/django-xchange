@@ -1,4 +1,5 @@
 import sys
+import typing
 from pathlib import Path
 
 from django.core.management import BaseCommand, call_command
@@ -11,7 +12,7 @@ from django_xchange.utils import import_csv
 class Command(PrintCommandMixin, BaseCommand):
     help = _('Import rates from csv file')
 
-    def handle(self, *args, **options) -> None:
+    def handle(self, *args: typing.Any, **options: typing.Any) -> None:
         call_command('migrate')
 
         path = Path(__file__).parents[4] / 'examples/example_rates.csv'

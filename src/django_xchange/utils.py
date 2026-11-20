@@ -2,21 +2,24 @@ import csv
 import importlib
 import io
 import json
+import typing
 from pathlib import Path
 
-from django.core.files.uploadedfile import UploadedFile
 
 from django_xchange.models import Rate
 
+if typing.TYPE_CHECKING:
+    from django.core.files.uploadedfile import UploadedFile
 
-def resolve_fqn(klass: str) -> object:
+
+def resolve_fqn(klass: str) -> typing.Any:
     module_path, class_name = klass.rsplit('.', 1)
 
     module = importlib.import_module(module_path)
     return getattr(module, class_name)
 
 
-def import_csv(uploaded_file: UploadedFile | str | Path) -> dict[str, int]:
+def import_csv(uploaded_file: 'UploadedFile[bytes] | str | Path') -> dict[str, int]:
     """Upload the CSV file of Rates."""
     if isinstance(uploaded_file, str):
         decoded_file = Path(uploaded_file).read_text(encoding='utf-8')

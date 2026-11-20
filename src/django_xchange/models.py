@@ -1,14 +1,16 @@
-import datetime
+import datetime as dt
+import typing
+from collections.abc import Iterable
 from decimal import Decimal
 
 from django.db import models
 
 from django.db import transaction
 
+from django_xchange.config import get_base_currency
+
 
 class Rate(models.Model):
-    from django_xchange.config import get_base_currency
-
     day = models.DateField(primary_key=True)
     base = models.CharField(max_length=3, help_text='Base rate (ISO3)', default=get_base_currency)
     rates = models.JSONField(default=dict)
@@ -19,20 +21,17 @@ class Rate(models.Model):
     def __str__(self) -> str:
         return str(self.day.strftime('%Y-%m-%d'))
 
-    def get_rates(self, force: bool = False, include: list[str] = None) -> dict[str, Decimal]:
+    def get_rates(self, force: bool = False, include: Iterable[str] | None = None) -> dict[str, Decimal]:
         """Retrieve the rate values as Decimals. Forces the refresh if needed."""
-        if include is None:
-            include = []
-
-        include = set(self.rates) | set(include)
+        symbols = set(self.rates) | set(include or [])
         if force:
-            rates = Rate.for_date(self.day, refresh=force, include=include).rates
+            rates = Rate.for_date(self.day, refresh=force, include=symbols).rates
         else:
             rates = self.rates
         return {k: round(Decimal(v), 7) for k, v in rates.items() if not k.startswith('_')}
 
     def convert(
-        self, from_value: float or Decimal, from_currency: str, to_currency: str = None, force: bool = False
+        self, from_value: float | Decimal, from_currency: str, to_currency: str | None = None, force: bool = False
     ) -> Decimal:
         """Convert a value from a specific currency to another.
 
@@ -57,7 +56,7 @@ class Rate(models.Model):
         return round(from_value / Decimal(rates[from_currency]) * Decimal(rates[to_currency]), 7)
 
     @staticmethod
-    def for_date(day: datetime.date, refresh: bool = False, include: list[str] = None) -> 'Rate':
+    def for_date(day: dt.date, refresh: bool = False, include: Iterable[str] | None = None) -> 'Rate':
         """Constructor-like method returning a Rate instance for the specific date.
 
         It will always request the BASE_CURRENCY.
@@ -85,7 +84,7 @@ class Rate(models.Model):
                 from django_xchange.brokers.common import BrokerManager
 
                 client = BrokerManager()
-                fetched_rates = client.get_rates(day, missing)
+                fetched_rates = client.get_rates(day, sorted(missing))
                 if refresh:
                     rate.rates |= fetched_rates
                 else:
@@ -93,5 +92,5 @@ class Rate(models.Model):
                 rate.save()
             return rate
 
-    def as_dict(self) -> dict:
+    def as_dict(self) -> dict[str, dict[str, typing.Any]]:
         return {self.day.strftime('%Y-%m-%d'): {'base': self.base, 'rates': self.rates}}

@@ -1,7 +1,7 @@
-import datetime
+import datetime as dt
 
 
 def _dt(x):
     if '-' in x:
-        return datetime.datetime.strptime(x, '%Y-%m-%d').date()
-    return datetime.datetime.strptime(x, '%Y/%m/%d').date()
+        return dt.datetime.strptime(x, '%Y-%m-%d').date()
+    return dt.datetime.strptime(x, '%Y/%m/%d').date()

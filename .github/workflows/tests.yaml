@@ -35,14 +35,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: [ "3.12", "3.13" ]
-        django: [ "52", "42", "32" ]
+        python: [ "3.12", "3.13", "3.14" ]
+        django: [ "61", "60", "52", "42", "32" ]
         exclude:
-          - python: 3.13
-            django: 32
+          - python: "3.13"
+            django: "32"
+          - python: "3.14"
+            django: "32"
     env:
       PY_VER: ${{ matrix.python}}
       DJ_VER: ${{ matrix.django}}
+      # Keep coverage data in the workspace root for the Codecov upload
+      COVERAGE_FILE: ${{ github.workspace }}/.coverage
 
     steps:
       - uses: actions/checkout@v4

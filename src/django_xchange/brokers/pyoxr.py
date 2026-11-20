@@ -2,7 +2,7 @@ import os
 from decimal import Decimal
 
 from pyoxr import OXRClient, init
-from django_xchange.brokers.common import BrokerProtocol
+from django_xchange.types import BrokerProtocol
 import typing
 
 
@@ -13,7 +13,7 @@ if typing.TYPE_CHECKING:
 class PyoxrBroker(BrokerProtocol):
     _initialised = False
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: typing.Any) -> None:
         if not PyoxrBroker._initialised:
             init(os.environ.get('OPEN_EXCHANGE_RATES_APP_ID'))
             PyoxrBroker._initialised = True
